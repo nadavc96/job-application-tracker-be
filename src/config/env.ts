@@ -3,7 +3,7 @@ import "dotenv/config";
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
-  DATABASE_URL: z.string(),
+  DATABASE_URL: z.string().min(1, "DATABASE_URL is required."),
 });
 
 const parsedSchema = envSchema.safeParse(process.env);
