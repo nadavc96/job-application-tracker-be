@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate:up": "node-pg-migrate up -m src/db/migrations",
+    "migrate:down": "node-pg-migrate down -m src/db/migrations",
+    "migrate:create": "node-pg-migrate create -m src/db/migrations"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +18,7 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "node-pg-migrate": "^9.0.0",
     "pg": "^8.23.0",
     "zod": "^4.4.3"
   },
@@ -20,6 +26,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^26.2.0",
     "@types/pg": "^8.23.1",
+    "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   }
 }
