@@ -24,11 +24,22 @@ export async function addUserToDB(
 
 export async function getUserByEmail(email: string): Promise<User | undefined> {
   const result = await pool.query(
-    `SELECT id, email, password_hash as "passwordHash"
+    `SELECT id, email, password_hash AS "passwordHash"
     FROM users
     WHERE email = $1`,
     [email],
   );
 
   return result.rows[0];
+}
+
+export async function userExistByID(userid: string): Promise<boolean> {
+  const result = await pool.query(
+    `SELECT *
+    FROM users
+    WHERE id = $1`,
+    [userid],
+  );
+
+  return result.rowCount !== 0;
 }

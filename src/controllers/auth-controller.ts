@@ -5,11 +5,12 @@ import {
   userExistsByEmail,
   addUserToDB,
   getUserByEmail,
+  userExistByID,
 } from "../repositories/auth-repo";
-import { generateTokens } from "../utils/jwt";
+import { generateTokens, getRefreshTokenPayload } from "../utils/jwt";
+import { setRefreshTokenCookie } from "../utils/cookies";
 
 const saltRounds: number = 10;
-const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 export async function register(req: Request, res: Response) {
   const { email, password } = req.body;
@@ -66,13 +67,7 @@ export async function login(req: Request, res: Response) {
 
     const { accessToken, refreshToken } = generateTokens(user.id);
 
-    res.cookie("refresh_token", refreshToken, {
-      maxAge: COOKIE_MAX_AGE,
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      path: "/auth/refresh",
-    });
+    setRefreshTokenCookie(res, refreshToken);
 
     return res.status(200).json({ accessToken });
   } catch (error) {
@@ -80,5 +75,34 @@ export async function login(req: Request, res: Response) {
     return res
       .status(500)
       .json({ error: "An error occurred. Could not login." });
+  }
+}
+
+export async function refresh(req: Request, res: Response) {
+  const tokenToVerify = req.cookies.refresh_token;
+
+  if (!tokenToVerify) {
+    return res.status(401).json({ error: "No refresh token provided" });
+  }
+
+  try {
+    const userid = getRefreshTokenPayload(tokenToVerify);
+    const userExist = await userExistByID(userid);
+
+    if (!userExist) {
+      return res
+        .status(401)
+        .json({ message: "Missing or invalid authentication token." });
+    }
+
+    const { accessToken, refreshToken } = generateTokens(userid);
+    setRefreshTokenCookie(res, refreshToken);
+
+    res.status(200).json({ accessToken });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({
+      error: "Invalid or expired refresh token.",
+    });
   }
 }

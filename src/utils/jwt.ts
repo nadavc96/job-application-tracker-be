@@ -13,3 +13,13 @@ export function generateTokens(userid: string) {
 
   return { accessToken, refreshToken };
 }
+
+export function getRefreshTokenPayload(token: string) {
+  const payload = jwt.verify(token, env.JWT_REFRESH_SECRET);
+
+  if (typeof payload === "string") {
+    throw new Error("Invalid token payload");
+  }
+
+  return payload.userid;
+}
