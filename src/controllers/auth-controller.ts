@@ -98,11 +98,17 @@ export async function refresh(req: Request, res: Response) {
     const { accessToken, refreshToken } = generateTokens(userid);
     setRefreshTokenCookie(res, refreshToken);
 
-    res.status(200).json({ accessToken });
+    return res.status(200).json({ accessToken });
   } catch (error) {
     console.error(error);
     return res.status(401).json({
       error: "Invalid or expired refresh token.",
     });
   }
+}
+
+export async function logout(req: Request, res: Response) {
+  res.clearCookie("refresh_token", { path: "/auth/refresh" });
+
+  return res.status(200).json({ message: "Logged out successfully." });
 }

@@ -3,7 +3,7 @@ import { User } from "../types/user";
 
 export async function userExistsByEmail(email: string): Promise<boolean> {
   const result = await pool.query(
-    `SELECT *
+    `SELECT 1
     FROM users
     WHERE email = $1`,
     [email],
@@ -23,7 +23,7 @@ export async function addUserToDB(
 }
 
 export async function getUserByEmail(email: string): Promise<User | undefined> {
-  const result = await pool.query(
+  const result = await pool.query<User>(
     `SELECT id, email, password_hash AS "passwordHash"
     FROM users
     WHERE email = $1`,
@@ -35,7 +35,7 @@ export async function getUserByEmail(email: string): Promise<User | undefined> {
 
 export async function userExistByID(userid: string): Promise<boolean> {
   const result = await pool.query(
-    `SELECT *
+    `SELECT 1
     FROM users
     WHERE id = $1`,
     [userid],
