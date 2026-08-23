@@ -5,11 +5,12 @@ import {
   refresh,
   logout,
 } from "../controllers/auth-controller";
+import { validateAuth } from "../middleware/validation";
 
 const router = Router();
 
-router.post("/register", register);
-router.post("/login", login);
+router.post("/register", validateAuth, register);
+router.post("/login", validateAuth, login);
 router.post("/refresh", refresh);
 router.post("/logout", logout);
 
