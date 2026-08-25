@@ -14,7 +14,7 @@ export function generateTokens(userid: string) {
   return { accessToken, refreshToken };
 }
 
-export function getRefreshTokenPayload(token: string) {
+function verifyToken(token: string, secret: string) {
   const payload = jwt.verify(token, env.JWT_REFRESH_SECRET);
 
   if (typeof payload === "string") {
@@ -22,4 +22,12 @@ export function getRefreshTokenPayload(token: string) {
   }
 
   return payload.userid;
+}
+
+export function getAccessTokenPayload(token: string) {
+  return verifyToken(token, env.JWT_ACCESS_SECRET);
+}
+
+export function getRefreshTokenPayload(token: string) {
+  return verifyToken(token, env.JWT_REFRESH_SECRET);
 }

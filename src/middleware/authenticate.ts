@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { getRefreshTokenPayload } from "../utils/jwt";
+import { getAccessTokenPayload } from "../utils/jwt";
 
 declare global {
   namespace Express {
@@ -23,7 +23,7 @@ export function authenticateUser(
   const token = authHeader.split(" ")[1] as string;
 
   try {
-    const payload = getRefreshTokenPayload(token);
+    const payload = getAccessTokenPayload(token);
     req.userid = payload;
 
     next();
