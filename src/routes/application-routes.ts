@@ -4,10 +4,12 @@ import {
   getAllApplications,
   addApplication,
   deleteApplication,
+  editApplication,
 } from "../controllers/applications-controller";
 import {
-  validateAddApplicationSchema,
-  validateDeleteApplicationSchema,
+  validateAddApplication,
+  validateDeleteApplication,
+  validateEditApplication,
 } from "../middleware/validation";
 
 const router = Router();
@@ -16,15 +18,20 @@ router.get("/applications", authenticateUser, getAllApplications);
 router.post(
   "/applications",
   authenticateUser,
-  validateAddApplicationSchema,
+  validateAddApplication,
   addApplication,
 );
 router.delete(
   "/applications/:id",
   authenticateUser,
-  validateDeleteApplicationSchema,
+  validateDeleteApplication,
   deleteApplication,
 );
-router.put("/applications/:id", authenticateUser, editApplication);
+router.put(
+  "/applications/:id",
+  authenticateUser,
+  validateEditApplication,
+  editApplication,
+);
 
 export default router;
