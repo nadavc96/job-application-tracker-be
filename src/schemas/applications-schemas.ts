@@ -6,3 +6,7 @@ export const addApplicationSchema = z.object({
   status: z.enum(["applied", "interview", "rejected", "accepted"]),
   jobURL: z.url(),
 });
+
+export const deleteApplicationSchema = z.object({
+  applicationId: z.string(),
+});
