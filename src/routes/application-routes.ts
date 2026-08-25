@@ -27,7 +27,7 @@ router.delete(
   validateDeleteApplication,
   deleteApplication,
 );
-router.put(
+router.patch(
   "/applications/:id",
   authenticateUser,
   validateEditApplication,
