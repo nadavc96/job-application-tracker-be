@@ -10,3 +10,12 @@ export const addApplicationSchema = z.object({
 export const deleteApplicationSchema = z.object({
   id: z.uuid(),
 });
+
+export const editApplicationSchema = z
+  .object({
+    status: z.enum(["applied", "interview", "rejected", "accepted"]).optional(),
+    jobURL: z.url().optional(),
+  })
+  .refine((data) => data.status !== undefined || data.jobURL !== undefined, {
+    message: "At least one field must be provided.",
+  });
