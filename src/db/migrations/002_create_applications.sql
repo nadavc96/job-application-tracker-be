@@ -5,7 +5,7 @@ CREATE TABLE applications(
     job_title TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'applied',
     job_url TEXT,
-    applied_at TIMESTAMPTZ,
+    applied_at TIMESTAMPTZ DEFAULT now(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 )
