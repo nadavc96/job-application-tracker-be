@@ -20,7 +20,7 @@ export function validateAuth(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-export function validateAddApplicationSchema(
+export function validateAddApplication(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -39,12 +39,12 @@ export function validateAddApplicationSchema(
   next();
 }
 
-export function validateDeleteApplicationSchema(
+export function validateDeleteApplication(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  const result = deleteApplicationSchema.safeParse(req.body);
+  const result = deleteApplicationSchema.safeParse(req.params);
 
   if (!result.success) {
     return res.status(400).json({

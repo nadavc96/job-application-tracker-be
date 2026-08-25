@@ -8,5 +8,5 @@ export const addApplicationSchema = z.object({
 });
 
 export const deleteApplicationSchema = z.object({
-  applicationId: z.string(),
+  id: z.uuid(),
 });
