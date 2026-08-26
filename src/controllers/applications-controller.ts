@@ -1,14 +1,11 @@
 import { Request, Response } from "express";
-import {
-  getUserApplications,
-  addUserApplicationToDB,
-  deleteApplicationFromDB,
-  editApplicationInDB,
-} from "../repositories/application-repo";
+import * as applicationService from "../services/applications-service";
 
 export async function getAllApplications(req: Request, res: Response) {
   try {
-    const applications = await getUserApplications(req.userid!);
+    const applications = await applicationService.getAllApplications(
+      req.userid!,
+    );
 
     return res.status(200).json(applications);
   } catch (error) {
@@ -23,9 +20,15 @@ export async function addApplication(req: Request, res: Response) {
   const userid = req.userid!;
 
   try {
-    await addUserApplicationToDB(companyName, jobTitle, status, jobURL, userid);
+    const application = await applicationService.addApplication(
+      companyName,
+      jobTitle,
+      status,
+      jobURL,
+      userid,
+    );
 
-    return res.status(201).json({ message: "Application added successfully." });
+    return res.status(201).json(application);
   } catch (error) {
     console.error(error);
 
@@ -41,7 +44,10 @@ export async function deleteApplication(
   const userid = req.userid!;
 
   try {
-    const deletedRows = await deleteApplicationFromDB(applicationId, userid);
+    const deletedRows = await applicationService.deleteApplication(
+      applicationId,
+      userid,
+    );
 
     if (deletedRows === 0) {
       return res.status(404).json({
@@ -68,7 +74,7 @@ export async function editApplication(
   const userid = req.userid!;
 
   try {
-    const updatedRows = await editApplicationInDB(
+    const updatedRows = await applicationService.editApplication(
       applicationId,
       userid,
       status,

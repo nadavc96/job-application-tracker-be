@@ -1,8 +1,11 @@
 import { pool } from "../db";
+import { Application } from "../types/application";
 
-export async function getUserApplications(userid: string) {
-  const result = await pool.query(
-    `SELECT *
+export async function getUserApplications(
+  userid: string,
+): Promise<Application[]> {
+  const result = await pool.query<Application>(
+    `SELECT user_id AS userid, company_name AS companyName, job_title AS jobTitle, status, job_url AS jobURL
     FROM applications
     WHERE user_id = $1`,
     [userid],
@@ -17,25 +20,32 @@ export async function addUserApplicationToDB(
   status: string,
   jobURL: string | undefined,
   userid: string,
-) {
-  await pool.query(
+): Promise<Application> {
+  const result = await pool.query<Application>(
     `INSERT INTO applications (user_id, company_name, job_title, status, job_url)
     VALUES ($1, $2, $3, $4, $5)
-    RETURNING *`,
+    RETURNING user_id AS userid, company_name AS companyName, job_title AS jobTitle, status, job_url AS jobURL`,
     [userid, companyName, jobTitle, status, jobURL],
   );
+
+  const application = result.rows[0];
+
+  if (!application) {
+    throw new Error("Failed to create application");
+  }
+  return application;
 }
 
 export async function deleteApplicationFromDB(
   applicationId: string,
   userid: string,
-) {
+): Promise<number> {
   const result = await pool.query(
     `DELETE FROM applications WHERE id = $1 AND user_id = $2`,
     [applicationId, userid],
   );
 
-  return result.rowCount;
+  return result.rowCount ?? 0;
 }
 
 export async function editApplicationInDB(
@@ -43,7 +53,7 @@ export async function editApplicationInDB(
   userid: string,
   status: string | undefined,
   jobURL: string | undefined,
-) {
+): Promise<number> {
   let result;
 
   if (status !== undefined && jobURL !== undefined) {
