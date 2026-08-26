@@ -1,4 +1,18 @@
 import app from "./app";
 import env from "./config/env";
+import { connectRedis } from "./config/redis";
 
-app.listen(env.PORT, () => console.log(`server running on port ${env.PORT}`));
+async function start() {
+  try {
+    await connectRedis();
+
+    app.listen(env.PORT, () =>
+      console.log(`server running on port ${env.PORT}`),
+    );
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+}
+
+start();
