@@ -3,3 +3,8 @@ export type User = {
   email: string;
   passwordHash: string;
 };
+
+export type PublicUser = {
+  id: string;
+  email: string;
+};
