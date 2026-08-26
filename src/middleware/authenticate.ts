@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { getAccessTokenPayload } from "../utils/jwt";
+import { AppError } from "../app-error";
 
 declare global {
   namespace Express {
@@ -17,18 +18,13 @@ export function authenticateUser(
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "No token provided." });
+    throw new AppError("No token provided.", 401);
   }
 
   const token = authHeader.split(" ")[1] as string;
 
-  try {
-    const payload = getAccessTokenPayload(token);
-    req.userid = payload;
+  const payload = getAccessTokenPayload(token);
+  req.userid = payload;
 
-    next();
-  } catch (error) {
-    console.error(error);
-    return res.status(401).json({ error: "Invalid or expired token" });
-  }
+  next();
 }

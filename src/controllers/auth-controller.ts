@@ -7,104 +7,47 @@ import {
   getUserByEmail,
   userExistByID,
 } from "../repositories/auth-repo";
+import * as authService from "../services/auth-service";
 import { generateTokens, getRefreshTokenPayload } from "../utils/jwt";
 import { setRefreshTokenCookie } from "../utils/cookies";
+import { AppError } from "../app-error";
 
 const saltRounds: number = 10;
 
 export async function register(req: Request, res: Response) {
   const { email, password } = req.body;
+  const user = await authService.registerUser(email, password);
 
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
-  }
-
-  try {
-    const isEmailTaken: boolean = await userExistsByEmail(email);
-
-    if (isEmailTaken) {
-      return res.status(409).json({ message: "Email already in use." });
-    }
-
-    const passwordHash = await bcrypt.hash(password, saltRounds);
-    await addUserToDB(email, passwordHash);
-
-    return res.status(201).json({ message: "User created successfully." });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred. Could not create user." });
-  }
+  return res.status(201).json(user);
 }
 
 export async function login(req: Request, res: Response) {
   const { email, password } = req.body;
+  const tokens = await authService.login(email, password);
 
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
-  }
+  setRefreshTokenCookie(res, tokens.refreshToken);
 
-  try {
-    const user: User | undefined = await getUserByEmail(email);
-
-    if (!user) {
-      return res
-        .status(401)
-        .json({ message: "Email or password is incorrect" });
-    }
-
-    const passwordMatch: boolean = await bcrypt.compare(
-      password,
-      user.passwordHash,
-    );
-
-    if (!passwordMatch) {
-      return res
-        .status(401)
-        .json({ message: "Email or password is incorrect" });
-    }
-
-    const { accessToken, refreshToken } = generateTokens(user.id);
-
-    setRefreshTokenCookie(res, refreshToken);
-
-    return res.status(200).json({ accessToken });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred. Could not login." });
-  }
+  return res.status(200).json({ accessToken: tokens.accessToken });
 }
 
 export async function refresh(req: Request, res: Response) {
   const tokenToVerify = req.cookies.refresh_token;
 
   if (!tokenToVerify) {
-    return res.status(401).json({ error: "No refresh token provided" });
+    throw new AppError("No refresh token provided", 401);
   }
 
-  try {
-    const userid = getRefreshTokenPayload(tokenToVerify);
-    const userExist = await userExistByID(userid);
+  const userid = getRefreshTokenPayload(tokenToVerify);
+  const userExist = await userExistByID(userid);
 
-    if (!userExist) {
-      return res
-        .status(401)
-        .json({ message: "Missing or invalid authentication token." });
-    }
-
-    const { accessToken, refreshToken } = generateTokens(userid);
-    setRefreshTokenCookie(res, refreshToken);
-
-    return res.status(200).json({ accessToken });
-  } catch (error) {
-    console.error(error);
-    return res.status(401).json({
-      error: "Invalid or expired refresh token.",
-    });
+  if (!userExist) {
+    throw new AppError("Missing or invalid authentication token.", 401);
   }
+
+  const { accessToken, refreshToken } = generateTokens(userid);
+  setRefreshTokenCookie(res, refreshToken);
+
+  return res.status(200).json({ accessToken });
 }
 
 export async function logout(req: Request, res: Response) {
