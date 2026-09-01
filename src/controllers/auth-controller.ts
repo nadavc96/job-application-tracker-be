@@ -31,26 +31,21 @@ export async function login(req: Request, res: Response) {
 }
 
 export async function refresh(req: Request, res: Response) {
-  const tokenToVerify = req.cookies.refresh_token;
-
-  if (!tokenToVerify) {
-    throw new AppError("No refresh token provided", 401);
-  }
-
-  const userid = getRefreshTokenPayload(tokenToVerify);
-  const userExist = await userExistByID(userid);
-
-  if (!userExist) {
-    throw new AppError("Missing or invalid authentication token.", 401);
-  }
-
-  const { accessToken, refreshToken } = generateTokens(userid);
+  const { accessToken, refreshToken } = await authService.rotateRefreshToken(
+    req.cookies.refresh_token,
+  );
   setRefreshTokenCookie(res, refreshToken);
 
   return res.status(200).json({ accessToken });
 }
 
 export async function logout(req: Request, res: Response) {
+  const refreshToken = req.cookies.refresh_token;
+
+  if (refreshToken) {
+    await authService.logout(refreshToken);
+  }
+
   res.clearCookie("refresh_token", { path: "/auth/refresh" });
 
   return res.status(200).json({ message: "Logged out successfully." });
