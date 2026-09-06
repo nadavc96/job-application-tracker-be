@@ -7,7 +7,7 @@ export function setRefreshTokenCookie(res: Response, refreshToken: string) {
     maxAge: COOKIE_MAX_AGE,
     httpOnly: true,
     secure: true,
-    sameSite: "strict",
+    sameSite: "lax",
     path: "/auth/refresh",
   });
 }
