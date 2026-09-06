@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { login } from "@/lib/api/auth";
 import { loginSchema } from "@/lib/schemas/login-schema";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
 export function LoginForm({
