@@ -3,6 +3,7 @@ import "dotenv/config";
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
+  FRONTEND_URL: z.url("FRONTEND_URL is required"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required."),
   JWT_ACCESS_SECRET: z.string().min(1, "JWT_ACCESS_SECRET is required."),
   JWT_REFRESH_SECRET: z.string().min(1, "JWT_REFRESH_SECRET is required."),
@@ -14,7 +15,7 @@ const envSchema = z.object({
 const parsedSchema = envSchema.safeParse(process.env);
 
 if (!parsedSchema.success) {
-  console.error(parsedSchema.error);
+  console.error(parsedSchema.error.issues);
   throw new Error("Failed to parse env variables");
 }
 
