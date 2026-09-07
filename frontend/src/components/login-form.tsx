@@ -18,6 +18,7 @@ import { login } from "@/lib/api/auth";
 import { loginSchema } from "@/lib/schemas/login-schema";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm({
   className,
@@ -25,6 +26,7 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [error, setError] = useState<string | null>(null);
   const { setAccessToken } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,8 +49,8 @@ export function LoginForm({
       console.log(data);
 
       setAccessToken(data);
-
-      // redirect to homepage
+      navigate("/", { replace: true });
+      // redirect to dashboard \^
     } catch (error) {
       setError("Invalid email or password.");
     }
