@@ -9,3 +9,13 @@ export async function login(email: string, password: string): Promise<string> {
 
   return response.data;
 }
+
+export async function register(email: string, password: string) {
+  const response = await api({
+    method: "post",
+    url: "/auth/register",
+    data: { email, password },
+  });
+
+  return response.data;
+}
