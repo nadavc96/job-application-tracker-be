@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { login } from "@/lib/api/auth";
-import { loginSchema } from "@/lib/schemas/login-schema";
+import { loginSchema } from "@/lib/schemas/auth-schema";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function LoginForm({
   className,
@@ -30,8 +30,8 @@ export function LoginForm({
 
   const handleLogin = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     setError(null);
+
     const formData = new FormData(e.currentTarget);
 
     const email = formData.get("email");
@@ -102,7 +102,8 @@ export function LoginForm({
                   Login with Google
                 </Button> */}
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  Don&apos;t have an account?{" "}
+                  <Link to={"/register"}>Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
