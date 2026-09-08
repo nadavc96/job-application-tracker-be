@@ -14,10 +14,8 @@ export function useAuthForm<T>(
 
     const formData = new FormData(e.currentTarget);
     const rawData = Object.fromEntries(formData.entries());
-    // console.log(...rawData);
 
     const result = schema.safeParse(rawData);
-    // console.log(result);
 
     if (!result.success) {
       setError(result.error.issues[0]?.message);
@@ -28,13 +26,10 @@ export function useAuthForm<T>(
       await onSubmit(result.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 409) {
-          setError("An account with this email already exists.");
-        } else if (error.response?.status === 400) {
-          setError("Please check your information and try again.");
-        } else {
-          setError("Something went wrong. Please try again.");
-        }
+        setError(
+          error.response?.data?.error ??
+            "Something went wrong. Please try again.",
+        );
       } else if (error instanceof Error) {
         setError(error.message ?? "Something went wrong. Please try again.");
       } else {
