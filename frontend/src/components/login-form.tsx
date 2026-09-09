@@ -1,3 +1,4 @@
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,45 +17,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { login } from "@/lib/api/auth";
 import { loginSchema } from "@/lib/schemas/auth-schema";
-import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { Link, useNavigate } from "react-router-dom";
+import { useAuthForm } from "@/hooks/useAuthForm";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [error, setError] = useState<string | null>(null);
-  const { setAccessToken } = useAuth();
   const navigate = useNavigate();
+  const { setAccessToken } = useAuth();
 
-  const handleLogin = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
+  const { error, handleSubmit } = useAuthForm(loginSchema, async (data) => {
+    const result = await login(data.email, data.password);
+    setAccessToken(result);
+    navigate("/register");
+    //|^ change to redirect to dashboard
+  });
 
-    const formData = new FormData(e.currentTarget);
-
-    const email = formData.get("email");
-    const password = formData.get("password");
-
-    const result = loginSchema.safeParse({ email, password });
-
-    if (!result.success) {
-      setError(result.error.issues[0]?.message ?? "Invalid form");
-      return;
-    }
-
-    try {
-      const data = await login(result.data.email, result.data.password);
-      console.log(data);
-
-      setAccessToken(data);
-      navigate("/", { replace: true });
-      // redirect to dashboard \^
-    } catch (error) {
-      setError("Invalid email or password.");
-    }
-  };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -65,7 +44,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
