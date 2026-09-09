@@ -30,8 +30,7 @@ export function LoginForm({
   const { error, handleSubmit } = useAuthForm(loginSchema, async (data) => {
     const result = await login(data.email, data.password);
     setAccessToken(result);
-    navigate("/register");
-    //|^ change to redirect to dashboard
+    navigate("/dashboard");
   });
 
   return (
