@@ -19,3 +19,12 @@ export async function register(email: string, password: string) {
 
   return response.data;
 }
+
+export async function logout() {
+  const response = await api({
+    method: "post",
+    url: "/auth/logout",
+  });
+
+  return response.data;
+}
