@@ -3,6 +3,6 @@ export type Application = {
   userid: string;
   companyName: string;
   jobTitle: string;
-  status: "applied" | "interview" | "rejected" | "accepted";
+  status: "applied" | "interview" | "offer" | "rejected" | "accepted";
   jobURL: string | undefined;
 };
