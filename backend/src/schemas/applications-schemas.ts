@@ -7,7 +7,10 @@ export const addApplicationSchema = z.object({
     .enum(["applied", "interview", "offer", "rejected", "accepted"])
     .optional()
     .default("applied"),
-  jobURL: z.url().optional(),
+  jobURL: z.preprocess((val) => {
+    const trimmed = typeof val === "string" ? val.trim() : val;
+    return trimmed === "" ? undefined : trimmed;
+  }, z.url().optional()),
 });
 
 export const deleteApplicationSchema = z.object({
