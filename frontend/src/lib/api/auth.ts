@@ -7,7 +7,7 @@ export async function login(email: string, password: string): Promise<string> {
     data: { email, password },
   });
 
-  return response.data;
+  return response.data.accessToken;
 }
 
 export async function register(email: string, password: string) {

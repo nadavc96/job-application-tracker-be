@@ -19,6 +19,7 @@ import { login } from "@/lib/api/auth";
 import { loginSchema } from "@/lib/schemas/auth-schema";
 import { useAuth } from "@/hooks/useAuth";
 import { useAuthForm } from "@/hooks/useAuthForm";
+import { setStoredAccessToken } from "@/lib/auth-token";
 
 export function LoginForm({
   className,
@@ -30,6 +31,7 @@ export function LoginForm({
   const { error, handleSubmit } = useAuthForm(loginSchema, async (data) => {
     const result = await login(data.email, data.password);
     setAccessToken(result);
+    setStoredAccessToken(result);
     navigate("/dashboard");
   });
 

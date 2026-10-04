@@ -1,8 +1,9 @@
-import { Search, Plus, LogOut } from "lucide-react";
+import { Search, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useLogout } from "@/hooks/useLogout";
+import { AddApplicationDialog } from "./add-application-dialog";
 
 export function Navbar() {
   const handleLogout = useLogout();
@@ -48,10 +49,7 @@ export function Navbar() {
             />
           </div>
 
-          <Button size="sm" className="gap-1.5 px-2.5 sm:px-3">
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Add Application</span>
-          </Button>
+          <AddApplicationDialog />
 
           <Button
             variant="outline"
