@@ -5,7 +5,7 @@ export async function getUserApplications(
   userid: string,
 ): Promise<Application[]> {
   const result = await pool.query<Application>(
-    `SELECT user_id AS userid, company_name AS companyName, job_title AS jobTitle, status, job_url AS jobURL
+    `SELECT id as "appID", company_name AS "companyName", job_title AS role, status, job_url AS "url"
     FROM applications
     WHERE user_id = $1`,
     [userid],
