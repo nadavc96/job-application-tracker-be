@@ -22,7 +22,7 @@ export const editApplicationSchema = z
     status: z
       .enum(["applied", "interview", "offer", "rejected", "accepted"])
       .optional(),
-    jobURL: z.url().optional(),
+    jobURL: z.url().nullable().optional(),
   })
   .refine((data) => data.status !== undefined || data.jobURL !== undefined, {
     message: "At least one field must be provided.",
