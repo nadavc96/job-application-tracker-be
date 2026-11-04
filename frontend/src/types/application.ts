@@ -1,4 +1,4 @@
-export type app = {
+export type APPLICATION = {
   appID: string;
   companyName: string;
   role: string;
