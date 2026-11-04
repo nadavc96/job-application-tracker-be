@@ -24,7 +24,7 @@ export async function addUserApplicationToDB(
   const result = await pool.query<Application>(
     `INSERT INTO applications (user_id, company_name, job_title, status, job_url)
     VALUES ($1, $2, $3, $4, $5)
-    RETURNING user_id AS userid, company_name AS companyName, job_title AS jobTitle, status, job_url AS jobURL`,
+    RETURNING id AS "appID", company_name AS "companyName", job_title AS role, status, job_url AS url`,
     [userid, companyName, jobTitle, status, jobURL],
   );
 
