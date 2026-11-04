@@ -18,10 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { addApplication } from "@/lib/api/applications";
+import { addApplicationToDB } from "@/lib/api/applications";
 import { cn } from "@/lib/utils";
+import type { APPLICATION } from "@/types/application";
 
-export function AddApplicationDialog() {
+interface AddApplicationDialogProps {
+  addApplication: (app: APPLICATION) => void;
+}
+
+export function AddApplicationDialog({
+  addApplication,
+}: AddApplicationDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [company, setCompany] = useState<string>("");
   const [role, setRole] = useState<string>("");
@@ -37,7 +44,8 @@ export function AddApplicationDialog() {
     setError(null);
     setSubmitting(true);
     try {
-      await addApplication(company, role, status, jobUrl);
+      const app = await addApplicationToDB(company, role, status, jobUrl);
+      addApplication(app);
       setOpen(false);
       setCompany("");
       setRole("");

@@ -4,8 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useLogout } from "@/hooks/useLogout";
 import { AddApplicationDialog } from "./add-application-dialog";
+import type { APPLICATION } from "@/types/application";
 
-export function Navbar() {
+interface NavbarProps {
+  addApplication: (app: APPLICATION) => void;
+}
+
+export function Navbar({ addApplication }: NavbarProps) {
   const handleLogout = useLogout();
 
   return (
@@ -49,7 +54,7 @@ export function Navbar() {
             />
           </div>
 
-          <AddApplicationDialog />
+          <AddApplicationDialog addApplication={addApplication} />
 
           <Button
             variant="outline"
