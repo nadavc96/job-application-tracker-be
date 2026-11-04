@@ -1,32 +1,38 @@
 import { api } from "./axios-client";
-type app = {
-  appID: string;
-  company: string;
-  role: string;
-  status: string;
-  url: string | null;
-};
+import { type APPLICATION } from "@/types/application";
 
-export async function addApplication(
+export async function addApplicationToDB(
   companyName: string,
   jobTitle: string,
   status: string,
   jobURL: string,
 ) {
-  console.log("1");
   const response = await api({
     method: "post",
     url: "/api/applications",
     data: { companyName, jobTitle, status, jobURL },
   });
-  console.log("2");
 
   return response.data;
 }
-export async function getApplications(): Promise<app[]> {
+export async function getApplications(): Promise<APPLICATION[]> {
   const response = await api({
     method: "get",
     url: "/api/applications",
+  });
+
+  return response.data;
+}
+
+export async function editApplication(
+  appID: string,
+  status: string,
+  jobURL: string | null,
+) {
+  const response = await api({
+    method: "patch",
+    url: `/api/applications/${appID}`,
+    data: { status, jobURL },
   });
 
   return response.data;
