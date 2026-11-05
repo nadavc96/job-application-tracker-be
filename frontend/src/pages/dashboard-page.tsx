@@ -1,11 +1,14 @@
 import { ApplicationTable } from "@/components/application-table";
 import { Navbar } from "@/components/navbar";
 import { StatsCards } from "@/components/stats-card";
+import { useApplications } from "@/hooks/useApplications";
 
 export function DashboardPage() {
+  const { applications, loading, error, updateApplication, addApplication } =
+    useApplications();
   return (
     <>
-      <Navbar />
+      <Navbar addApplication={addApplication} />
       <div className="p-15 flex flex-col gap-6">
         <div>
           <h2 className="mb-2 font-extrabold">Dashboard</h2>
@@ -14,9 +17,19 @@ export function DashboardPage() {
           </p>
         </div>
         <div className="justify-center items-center flex">
-          <StatsCards />
+          <StatsCards applications={applications} loading={loading} />
         </div>
-        {/* <ApplicationTable /> */}
+        {error ? (
+          <p className="text-center text-red-500">
+            Failed to load applications.
+          </p>
+        ) : (
+          <ApplicationTable
+            applications={applications}
+            loading={loading}
+            onUpdate={updateApplication}
+          />
+        )}
       </div>
     </>
   );
