@@ -1,52 +1,61 @@
-import { Table } from "@/components/ui/table";
+import { ApplicationTableSkeleton } from "@/components/application-table-skeleton";
 import {
+  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
-import { Badge } from "./ui/badge";
-import { useEffect, useState } from "react";
-import { getApplications } from "@/lib/api/applications";
-type app = {
-  appID: string;
-  company: string;
-  role: string;
-  status: string;
-  url: string | null;
-};
-export function ApplicationTable() {
-  const [applications, setApplications] = useState<app[]>([]);
-  useEffect(() => {
-    const fetchApplications = async () => {
-      const apps = await getApplications();
-      setApplications(apps);
-    };
-    fetchApplications();
-  }, []);
+} from "@/components/ui/table";
+import { type APPLICATION } from "@/types/application";
+import { ApplicationRow } from "./application-row";
+
+const COLUMNS = ["Company", "Role", "Status", "Job URL", "Edit"];
+
+interface ApplicationTableProps {
+  applications: APPLICATION[];
+  loading: boolean;
+  onUpdate: (appID: string, changes: Partial<APPLICATION>) => void;
+}
+
+export function ApplicationTable({
+  applications,
+  loading,
+  onUpdate,
+}: ApplicationTableProps) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Company</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Job URL</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {applications.map((app) => (
-          <TableRow key={app.appID}>
-            <TableCell>{app.company}</TableCell>
-            <TableCell>{app.role}</TableCell>
-            <TableCell>
-              <Badge>{app.status}</Badge>
-            </TableCell>
-            <TableCell>{app.url}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="flex items-center justify-center pt-5">
+      <div className="w-full max-w-2xl">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {COLUMNS.map((col) => (
+                <TableHead key={col} className="text-center">
+                  {col}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <ApplicationTableSkeleton rows={10} columns={5} />
+            ) : applications.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  className="h-24 text-center text-muted-foreground"
+                >
+                  No applications yet.
+                </TableCell>
+              </TableRow>
+            ) : (
+              applications.map((app) => (
+                <ApplicationRow key={app.appID} app={app} onUpdate={onUpdate} />
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   );
 }
