@@ -9,19 +9,20 @@ interface StatCardProps {
 }
 
 export function StatsCards({ applications, loading }: StatCardProps) {
+  const totalApps = applications.length;
   const count = (status: string) =>
     applications.filter((a) => a.status === status).length;
 
   const stats = [
     {
       label: "Total Applications",
-      value: applications.length,
+      value: totalApps,
       color: "text-foreground",
       icon: Briefcase,
     },
     {
       label: "Active",
-      value: applications.filter((a) => a.status !== "Rejected").length,
+      value: totalApps - count("rejected"),
       color: "text-foreground",
       icon: Activity,
     },

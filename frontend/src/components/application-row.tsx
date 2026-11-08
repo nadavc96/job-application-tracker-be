@@ -1,19 +1,29 @@
 import { useState } from "react";
+import { Trash2 } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { editApplication } from "@/lib/api/applications";
+import {
+  deleteApplicationFromDB,
+  editApplication,
+} from "@/lib/api/applications";
 import { type APPLICATION, STATUSES } from "@/types/application";
 import { normalizeUrl } from "@/lib/utils";
 
 interface ApplicationRowProps {
   app: APPLICATION;
   onUpdate: (appID: string, changes: Partial<APPLICATION>) => void;
+  onDelete: (appID: string) => void;
 }
 
-export function ApplicationRow({ app, onUpdate }: ApplicationRowProps) {
+export function ApplicationRow({
+  app,
+  onUpdate,
+  onDelete,
+}: ApplicationRowProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
   const [draft, setDraft] = useState<{ status: string; url: string | null }>({
     status: "",
     url: null,
@@ -23,6 +33,18 @@ export function ApplicationRow({ app, onUpdate }: ApplicationRowProps) {
   const startEdit = (a: APPLICATION) => {
     setIsEditing(true);
     setDraft({ status: a.status, url: a.url ?? null });
+  };
+
+  const handleDelete = async (app: APPLICATION) => {
+    try {
+      setDeleting(true);
+      await deleteApplicationFromDB(app.appID);
+      onDelete(app.appID);
+    } catch (err) {
+      console.log("failed to delete app", err);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const cancel = () => {
@@ -98,9 +120,19 @@ export function ApplicationRow({ app, onUpdate }: ApplicationRowProps) {
             </Button>
           </>
         ) : (
-          <Button size="sm" variant="outline" onClick={() => startEdit(app)}>
-            Edit
-          </Button>
+          <div className="flex items-center justify-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => startEdit(app)}>
+              Edit
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={deleting}
+              onClick={() => handleDelete(app)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         )}
       </TableCell>
     </TableRow>

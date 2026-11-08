@@ -16,12 +16,14 @@ interface ApplicationTableProps {
   applications: APPLICATION[];
   loading: boolean;
   onUpdate: (appID: string, changes: Partial<APPLICATION>) => void;
+  onDelete: (appID: string) => void;
 }
 
 export function ApplicationTable({
   applications,
   loading,
   onUpdate,
+  onDelete,
 }: ApplicationTableProps) {
   return (
     <div className="flex items-center justify-center pt-5">
@@ -50,7 +52,12 @@ export function ApplicationTable({
               </TableRow>
             ) : (
               applications.map((app) => (
-                <ApplicationRow key={app.appID} app={app} onUpdate={onUpdate} />
+                <ApplicationRow
+                  key={app.appID}
+                  app={app}
+                  onUpdate={onUpdate}
+                  onDelete={onDelete}
+                />
               ))
             )}
           </TableBody>
