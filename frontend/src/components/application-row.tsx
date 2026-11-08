@@ -10,6 +10,7 @@ import {
 } from "@/lib/api/applications";
 import { type APPLICATION, STATUSES } from "@/types/application";
 import { normalizeUrl } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface ApplicationRowProps {
   app: APPLICATION;
@@ -41,7 +42,9 @@ export function ApplicationRow({
       await deleteApplicationFromDB(app.appID);
       onDelete(app.appID);
     } catch (err) {
-      console.log("failed to delete app", err);
+      toast.error("Couldn't delete application", {
+        description: "Something went wrong. Please try again",
+      });
     } finally {
       setDeleting(false);
     }
@@ -60,7 +63,7 @@ export function ApplicationRow({
       onUpdate(appID, { status: draft.status, url: normalizedUrl });
       setIsEditing(false);
     } catch (err) {
-      console.error("Failed to update application", err);
+      toast.error("Couldn't save changes", { description: "Please try again" });
     } finally {
       setSaving(false);
     }
