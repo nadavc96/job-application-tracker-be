@@ -36,6 +36,12 @@ export function useApplications() {
     [],
   );
 
+  const removeApplication = useCallback(
+    (appID: string) =>
+      setApplications((prev) => prev.filter((a) => a.appID !== appID)),
+    [],
+  );
+
   return {
     applications,
     loading,
@@ -43,5 +49,6 @@ export function useApplications() {
     updateApplication,
     addApplication,
     refetch: fetchApplications,
+    removeApplication,
   };
 }
