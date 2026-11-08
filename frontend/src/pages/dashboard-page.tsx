@@ -4,8 +4,14 @@ import { StatsCards } from "@/components/stats-card";
 import { useApplications } from "@/hooks/useApplications";
 
 export function DashboardPage() {
-  const { applications, loading, error, updateApplication, addApplication } =
-    useApplications();
+  const {
+    applications,
+    loading,
+    error,
+    updateApplication,
+    addApplication,
+    removeApplication,
+  } = useApplications();
   return (
     <>
       <Navbar addApplication={addApplication} />
@@ -28,6 +34,7 @@ export function DashboardPage() {
             applications={applications}
             loading={loading}
             onUpdate={updateApplication}
+            onDelete={removeApplication}
           />
         )}
       </div>
