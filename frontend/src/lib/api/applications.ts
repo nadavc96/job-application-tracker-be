@@ -37,3 +37,12 @@ export async function editApplication(
 
   return response.data;
 }
+
+export async function deleteApplicationFromDB(appID: string) {
+  const response = await api({
+    method: "delete",
+    url: `/api/applications/${appID}`,
+  });
+
+  return response.data;
+}
