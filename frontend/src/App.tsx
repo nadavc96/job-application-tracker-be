@@ -3,10 +3,12 @@ import { AuthProvider } from "./context/auth-provider";
 import SignUpPage from "@/pages/sign-up-page";
 import LoginPage from "./pages/login-page";
 import { DashboardPage } from "./pages/dashboard-page";
+import { Toaster } from "@/components/ui/sonner";
 
 function App() {
   return (
     <AuthProvider>
+      <Toaster />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<SignUpPage />} />
