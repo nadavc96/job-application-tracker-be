@@ -21,6 +21,7 @@ import {
 import { addApplicationToDB } from "@/lib/api/applications";
 import { cn } from "@/lib/utils";
 import type { APPLICATION } from "@/types/application";
+import { toast } from "sonner";
 
 interface AddApplicationDialogProps {
   addApplication: (app: APPLICATION) => void;
@@ -45,6 +46,9 @@ export function AddApplicationDialog({
     setSubmitting(true);
     try {
       const app = await addApplicationToDB(company, role, status, jobUrl);
+      toast.success("Application added", {
+        description: `${company} - ${role}`,
+      });
       addApplication(app);
       setOpen(false);
       setCompany("");
