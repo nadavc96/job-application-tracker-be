@@ -31,12 +31,12 @@ export function ApplicationRow({
   });
   const [saving, setSaving] = useState(false);
 
-  const startEdit = (a: APPLICATION) => {
+  const startEdit = () => {
     setIsEditing(true);
-    setDraft({ status: a.status, url: a.url ?? null });
+    setDraft({ status: app.status, url: app.url ?? null });
   };
 
-  const handleDelete = async (app: APPLICATION) => {
+  const handleDelete = async () => {
     try {
       setDeleting(true);
       await deleteApplicationFromDB(app.appID);
@@ -55,13 +55,13 @@ export function ApplicationRow({
     setIsEditing(false);
   };
 
-  const save = async (appID: string) => {
+  const save = async () => {
     const normalizedUrl = normalizeUrl(draft.url);
 
     try {
       setSaving(true);
-      await editApplication(appID, draft.status, normalizedUrl);
-      onUpdate(appID, { status: draft.status, url: normalizedUrl });
+      await editApplication(app.appID, draft.status, normalizedUrl);
+      onUpdate(app.appID, { status: draft.status, url: normalizedUrl });
       setIsEditing(false);
     } catch (err) {
       console.error("Failed to update application", err);
@@ -119,7 +119,7 @@ export function ApplicationRow({
       <TableCell className="text-center whitespace-nowrap">
         {isEditing ? (
           <div className="flex items-center justify-center gap-2">
-            <Button size="sm" disabled={saving} onClick={() => save(app.appID)}>
+            <Button size="sm" disabled={saving} onClick={() => save()}>
               Save
             </Button>
             <Button
@@ -133,14 +133,14 @@ export function ApplicationRow({
           </div>
         ) : (
           <div className="flex items-center justify-center gap-2">
-            <Button size="sm" variant="outline" onClick={() => startEdit(app)}>
+            <Button size="sm" variant="outline" onClick={() => startEdit()}>
               Edit
             </Button>
             <Button
               size="sm"
               variant="outline"
               disabled={deleting}
-              onClick={() => handleDelete}
+              onClick={() => handleDelete()}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
