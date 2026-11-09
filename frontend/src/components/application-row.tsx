@@ -41,6 +41,7 @@ export function ApplicationRow({
       setDeleting(true);
       await deleteApplicationFromDB(app.appID);
       onDelete(app.appID);
+      toast.success("Application deleted");
     } catch (err) {
       toast.error("Couldn't delete application", {
         description: "Something went wrong. Please try again",
@@ -63,6 +64,7 @@ export function ApplicationRow({
       onUpdate(appID, { status: draft.status, url: normalizedUrl });
       setIsEditing(false);
     } catch (err) {
+      console.error("Failed to update application", err);
       toast.error("Couldn't save changes", { description: "Please try again" });
     } finally {
       setSaving(false);
@@ -105,6 +107,8 @@ export function ApplicationRow({
         ) : app.url ? (
           <a
             href={app.url}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-block border-2 rounded-md px-3 py-1 transition hover:opacity-100 hover:bg-gray-300 dark:hover:bg-gray-800"
           >
             application url
@@ -114,14 +118,19 @@ export function ApplicationRow({
 
       <TableCell className="text-center whitespace-nowrap">
         {isEditing ? (
-          <>
+          <div className="flex items-center justify-center gap-2">
             <Button size="sm" disabled={saving} onClick={() => save(app.appID)}>
               Save
             </Button>
-            <Button size="sm" variant="ghost" onClick={cancel}>
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={saving}
+              onClick={cancel}
+            >
               Cancel
             </Button>
-          </>
+          </div>
         ) : (
           <div className="flex items-center justify-center gap-2">
             <Button size="sm" variant="outline" onClick={() => startEdit(app)}>
@@ -131,7 +140,7 @@ export function ApplicationRow({
               size="sm"
               variant="outline"
               disabled={deleting}
-              onClick={() => handleDelete(app)}
+              onClick={() => handleDelete}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
