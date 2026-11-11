@@ -8,9 +8,15 @@ import type { APPLICATION } from "@/types/application";
 
 interface NavbarProps {
   addApplication: (app: APPLICATION) => void;
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
 }
 
-export function Navbar({ addApplication }: NavbarProps) {
+export function Navbar({
+  addApplication,
+  searchTerm,
+  onSearchChange,
+}: NavbarProps) {
   const handleLogout = useLogout();
 
   return (
@@ -51,6 +57,8 @@ export function Navbar({ addApplication }: NavbarProps) {
             <Input
               placeholder="Search companies, roles..."
               className="pl-8 h-8"
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
             />
           </div>
 

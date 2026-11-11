@@ -17,6 +17,7 @@ interface ApplicationTableProps {
   loading: boolean;
   onUpdate: (appID: string, changes: Partial<APPLICATION>) => void;
   onDelete: (appID: string) => void;
+  searchTerm: string;
 }
 
 export function ApplicationTable({
@@ -24,6 +25,7 @@ export function ApplicationTable({
   loading,
   onUpdate,
   onDelete,
+  searchTerm,
 }: ApplicationTableProps) {
   return (
     <div className="flex items-center justify-center pt-5">
@@ -47,7 +49,10 @@ export function ApplicationTable({
                   colSpan={5}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No applications yet.
+                  {searchTerm?.trim()
+                    ? `No applications match "${searchTerm}".`
+                    : "No applications yet"}
+                  {/* No applications yet. */}
                 </TableCell>
               </TableRow>
             ) : (
