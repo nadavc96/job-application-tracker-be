@@ -1,3 +1,5 @@
+import type { LucideIcon } from "lucide-react";
+
 export type APPLICATION = {
   appID: string;
   companyName: string;
@@ -7,3 +9,10 @@ export type APPLICATION = {
 };
 
 export const STATUSES = ["applied", "interview", "offer", "rejected"];
+
+export type STATS = {
+  label: string;
+  value: number;
+  icon: LucideIcon;
+  color?: string;
+};
