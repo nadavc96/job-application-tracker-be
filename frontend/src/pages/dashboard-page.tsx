@@ -47,7 +47,6 @@ export function DashboardPage() {
           {stats.map((stat) => (
             <StatsCards key={stat.label} stat={stat} loading={loading} />
           ))}
-          {/* <StatsCards applications={applications} loading={loading} /> */}
         </div>
         {error ? (
           <p className="text-center text-red-500">
