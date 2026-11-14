@@ -2,6 +2,7 @@ import { ApplicationTable } from "@/components/application-table";
 import { Navbar } from "@/components/navbar";
 import { StatsCards } from "@/components/stats-card";
 import { useApplications } from "@/hooks/useApplications";
+import { useDashboardStats } from "@/hooks/useDashboardStats";
 import type { APPLICATION } from "@/types/application";
 import { useMemo, useState } from "react";
 
@@ -15,6 +16,7 @@ export function DashboardPage() {
     removeApplication,
   } = useApplications();
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const stats = useDashboardStats(applications);
 
   const filteredApplications = useMemo<APPLICATION[]>(() => {
     const q = searchTerm.trim().toLowerCase();
@@ -26,6 +28,7 @@ export function DashboardPage() {
         app.role?.toLowerCase().includes(q),
     );
   }, [applications, searchTerm]);
+
   return (
     <>
       <Navbar
@@ -40,8 +43,11 @@ export function DashboardPage() {
             Track and manage your active job search.
           </p>
         </div>
-        <div className="justify-center items-center flex">
-          <StatsCards applications={applications} loading={loading} />
+        <div className="flex flex-wrap justify-center gap-20">
+          {stats.map((stat) => (
+            <StatsCards key={stat.label} stat={stat} loading={loading} />
+          ))}
+          {/* <StatsCards applications={applications} loading={loading} /> */}
         </div>
         {error ? (
           <p className="text-center text-red-500">
