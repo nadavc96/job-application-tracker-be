@@ -31,5 +31,5 @@ export function useDashboardStats(applications: APPLICATION[]) {
         color: "text-green-600",
       },
     ];
-  }, applications);
+  }, [applications]);
 }
