@@ -16,13 +16,18 @@ export function generateTokens(userid: string) {
 }
 
 function verifyToken(token: string, secret: string) {
-  const payload = jwt.verify(token, env.JWT_ACCESS_SECRET!);
+  try {
+    const payload = jwt.verify(token, secret);
 
-  if (typeof payload === "string") {
-    throw new AppError("Invalid token payload", 401);
+    if (typeof payload === "string") {
+      throw new AppError("Invalid token payload", 401);
+    }
+
+    return payload.userid;
+  } catch (err) {
+    if (err instanceof AppError) throw err;
+    throw new AppError("Invalid or expired token.", 401);
   }
-
-  return payload.userid;
 }
 
 export function getAccessTokenPayload(token: string) {
