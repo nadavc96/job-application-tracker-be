@@ -1,5 +1,6 @@
 import { pool } from "../db";
-import { Application } from "../types/application";
+import type { Queryable } from "../types/db";
+import type { Application } from "../types/application";
 
 export async function getUserApplications(
   userid: string,
@@ -20,8 +21,9 @@ export async function addUserApplicationToDB(
   status: string,
   jobURL: string | undefined,
   userid: string,
+  db: Queryable = pool,
 ): Promise<Application> {
-  const result = await pool.query<Application>(
+  const result = await db.query<Application>(
     `INSERT INTO applications (user_id, company_name, job_title, status, job_url)
     VALUES ($1, $2, $3, $4, $5)
     RETURNING id AS "appID", company_name AS "companyName", job_title AS role, status, job_url AS url`,
@@ -53,25 +55,26 @@ export async function editApplicationInDB(
   userid: string,
   status: string | undefined,
   jobURL: string | undefined,
+  db: Queryable = pool,
 ): Promise<number> {
   let result;
 
   if (status !== undefined && jobURL !== undefined) {
-    result = await pool.query(
+    result = await db.query(
       `UPDATE applications
         SET status = $1, job_url = $2
         WHERE id = $3 AND user_id = $4`,
       [status, jobURL, applicationId, userid],
     );
   } else if (status !== undefined && jobURL === undefined) {
-    result = await pool.query(
+    result = await db.query(
       `UPDATE applications
     SET status = $1
     WHERE id = $2 AND user_id = $3`,
       [status, applicationId, userid],
     );
   } else {
-    result = await pool.query(
+    result = await db.query(
       `UPDATE applications
         SET job_url = $1
         WHERE id = $2 AND user_id = $3`,
