@@ -62,25 +62,40 @@ export async function editApplicationInDB(
   if (status !== undefined && jobURL !== undefined) {
     result = await db.query(
       `UPDATE applications
-        SET status = $1, job_url = $2
+        SET status = $1, job_url = $2, updated_at = now()
         WHERE id = $3 AND user_id = $4`,
       [status, jobURL, applicationId, userid],
     );
   } else if (status !== undefined && jobURL === undefined) {
     result = await db.query(
       `UPDATE applications
-    SET status = $1
+    SET status = $1, updated_at = now()
     WHERE id = $2 AND user_id = $3`,
       [status, applicationId, userid],
     );
   } else {
     result = await db.query(
       `UPDATE applications
-        SET job_url = $1
+        SET job_url = $1, updated_at = now()
         WHERE id = $2 AND user_id = $3`,
       [jobURL, applicationId, userid],
     );
   }
 
   return result.rowCount ?? 0;
+}
+
+export async function getApplicationStatus(
+  appID: string,
+  userID: string,
+  db: Queryable = pool,
+): Promise<string | null> {
+  const result = await db.query<{ status: string }>(
+    `SELECT status
+    FROM applications
+    WHERE id = $1 AND user_id = $2`,
+    [appID, userID],
+  );
+
+  return result.rows[0]?.status ?? null;
 }
